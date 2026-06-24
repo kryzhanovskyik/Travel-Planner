@@ -27,6 +27,7 @@ def verify_password(plain: str, hashed: str) -> bool:
     return bcrypt.checkpw(plain.encode(), hashed.encode())
 
 def create_access_token(user_id: int) -> str:
+    """Create a signed JWT with a unique jti claim used for revocation."""
     expire = datetime.now(timezone.utc) + timedelta(days=ACCESS_TOKEN_EXPIRE_DAYS)
     payload = {"sub": str(user_id), "exp": expire, "jti": str(uuid.uuid4())}
     return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
@@ -35,6 +36,7 @@ async def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(_bearer_scheme),
     db: AsyncSession = Depends(get_db),
 ):
+    """Validate Bearer token, check revocation list, and return the authenticated user."""
     from src.models import RevokedToken, User
 
     exc = HTTPException(

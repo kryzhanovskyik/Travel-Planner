@@ -37,6 +37,7 @@ class Place(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     project_id = Column(Integer, ForeignKey("projects.id", ondelete="CASCADE"), nullable=False)
+    external_id = Column(Integer, nullable=False)
     title = Column(String(512), nullable=False)
     is_visited = Column(Boolean, default=False, nullable=False)
 

@@ -10,7 +10,7 @@ TTL = 24 * 60 * 60     # 24 hours
 
 
 async def validate_artwork(external_id: int) -> Optional[dict]:
-    """Return artwork data dict from the Art Institute of Chicago API, or None if not found."""
+    """Fetch artwork data from the Art Institute of Chicago API with 24h cache. Returns None if not found."""
     redis = get_redis()
     key = f"artwork:{external_id}"
 

@@ -1,0 +1,25 @@
+services:
+  api:
+    build: .
+    ports:
+      - "8001:8000"
+    volumes:
+      - db_data:/app/data
+    environment:
+      DATABASE_URL: sqlite+aiosqlite:////app/data/travel_planner.db
+      SECRET_KEY: ${SECRET_KEY:-change-me-in-production}
+      ACCESS_TOKEN_EXPIRE_DAYS: ${ACCESS_TOKEN_EXPIRE_DAYS:-30}
+      REDIS_URL: redis://redis:6379/0
+    depends_on:
+      - redis
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+
+volumes:
+  db_data:
+  redis_data:

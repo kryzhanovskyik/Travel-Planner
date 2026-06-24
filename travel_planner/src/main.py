@@ -2,15 +2,20 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
+from src import cache
 from src.database import Base, engine
 from src.routers.auth import router as auth_router
+from src.routers.projects import router as projects_router
+from src.routers.places import router as places_router
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    await cache.init()
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
     yield
+    await cache.close()
 
 
 app = FastAPI(
@@ -19,6 +24,8 @@ app = FastAPI(
     lifespan=lifespan,
 )
 app.include_router(auth_router)
+app.include_router(projects_router)
+app.include_router(places_router)
 
 
 @app.get("/health", tags=["health"])
