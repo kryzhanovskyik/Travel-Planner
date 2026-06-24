@@ -55,3 +55,10 @@ class Note(Base):
     updated_at = Column(DateTime(timezone=True), default=_utcnow, nullable=False)
 
     place = relationship("Place", back_populates="notes")
+
+class RevokedToken(Base):
+    __tablename__ = "revoked_tokens"
+
+    id = Column(Integer, primary_key=True, index=True)
+    jti = Column(String, unique=True, nullable=False, index=True)
+    revoked_at = Column(DateTime(timezone=True), default=_utcnow, nullable=False)
